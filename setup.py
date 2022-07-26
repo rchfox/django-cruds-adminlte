@@ -43,9 +43,9 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        'django>=2.2',
-        'django-crispy-forms==1.7.2',
-        'djangoajax==2.3.7',
+        'django>=3.2',
+        'django-crispy-forms>=1.14.0',
+        'djangoajax>=3.3',
     ],
     license="BSD",
     zip_safe=False,
