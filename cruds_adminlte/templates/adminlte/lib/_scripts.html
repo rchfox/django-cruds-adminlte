@@ -1,26 +1,31 @@
 {% load static %}
 
 {% block scripts %}
-<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<script src="{% static 'libs/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'libs/jquery-ui/jquery-ui.min.js' %}"></script>
+
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
     $.widget.bridge('uibutton', $.ui.button);
 </script>
-<script src="{% static "bootstrap/dist/js/bootstrap.min.js" %} "></script>
-<script src="{% static "admin-lte/dist/js/app.min.js" %}"></script>
-<script src="{% static "select2/js/select2.min.js" %}"></script>
 
-<script src="{% static 'input-mask/jquery.inputmask.js' %}"></script>
-<script src="{% static 'input-mask/jquery.inputmask.date.extensions.js' %}"></script>
-<script src="{% static 'input-mask/jquery.inputmask.extensions.js' %}"></script>
+<script src="{% static 'libs/bootstrap/js/bootstrap.min.js' %} "></script>
+<script src="{% static 'libs/admin-lte/js/adminlte.min.js' %}"></script>
 
+<script src="{% static 'libs/select2/js/select2.min.js' %}"></script>
 
-<script src="{% static 'datepicker/bootstrap-datepicker.js' %}"></script>
-<script src="{% static 'colorpicker/bootstrap-colorpicker.min.js' %}"></script>
-<script src="{% static 'timepicker/bootstrap-timepicker.min.js' %}"></script>
-<script src="{% static 'datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
-<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
-<script src="{% static 'icheck/icheck.min.js' %}"></script>
+<script src="{% static 'libs/input-mask/jquery.inputmask.js' %}"></script>
+<script src="{% static 'libs/input-mask/jquery.inputmask.date.extensions.js' %}"></script>
+<script src="{% static 'libs/input-mask/jquery.inputmask.extensions.js' %}"></script>
 
-<script src="{% static "js/cruds.js" %}"></script>
+<script src="{% static 'libs/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' %}"></script>
+<script src="{% static 'libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js' %}"></script>
+<script src="{% static 'libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'libs/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+
+<script src="{% static 'libs/ckeditor4/ckeditor.js' %}"></script>
+<script src="{% static 'libs/icheck/icheck.min.js' %}"></script>
+
+<script src="{% static "app/js/cruds.js" %}"></script>
 {% endblock %}
