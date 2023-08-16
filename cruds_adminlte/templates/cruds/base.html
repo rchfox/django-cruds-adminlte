@@ -17,16 +17,14 @@
     {% block css %}{% endblock css %}
     {% block stylesheets %}
         {% include 'adminlte/lib/_styles.html' %}
-        <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
     {% endblock %}
 
     {% block javascript %}
         {% include 'adminlte/lib/_scripts.html' %}
-        <script type="text/javascript" src="{% static 'js-cookie/js.cookie.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax-plugin.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'libs/js-cookie/js.cookie.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'libs/django_ajax/jquery.ajax.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'libs/django_ajax/jquery.ajax-plugin.min.js' %}"></script>
     {% endblock %}
-    {% block js %}{% endblock js %}
 
     {% block extra_head %}{% endblock %}
 </head>
