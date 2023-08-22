@@ -292,6 +292,7 @@ class CRUDView(object):
     template_blocks = {}
     namespace = None
     fields = '__all__'
+    relative = False
     urlprefix = ""
     check_login = True
     check_perms = True
@@ -694,34 +695,40 @@ class CRUDView(object):
                 pre = "%s/" % self.cruds_url
         except AttributeError:
             pre = ""
-        base_name = "%s%s/%s" % (pre, self.model._meta.app_label,
-                                 self.model.__name__.lower())
+
+        base_name = ""
+
+        if self.relative:
+            base_name = "%s" % (self.model.__name__.lower())
+        else:
+            base_name = "^%s%s/%s" % (pre, self.model._meta.app_label,
+                                     self.model.__name__.lower())
         myurls = []
         if 'list' in self.views_available:
-            myurls.append(url("^%s/list$" % (base_name,),
+            myurls.append(url("%s/list$" % (base_name,),
                               self.list,
                               name=utils.crud_url_name(
                                   self.model, 'list', prefix=self.urlprefix)))
         if 'create' in self.views_available:
-            myurls.append(url("^%s/create$" % (base_name,),
+            myurls.append(url("%s/create$" % (base_name,),
                               self.create,
                               name=utils.crud_url_name(
                                   self.model, 'create', prefix=self.urlprefix))
                           )
         if 'detail' in self.views_available:
-            myurls.append(url('^%s/(?P<pk>[^/]+)$' % (base_name,),
+            myurls.append(url('%s/(?P<pk>[^/]+)$' % (base_name,),
                               self.detail,
                               name=utils.crud_url_name(
                                   self.model, 'detail', prefix=self.urlprefix))
                           )
         if 'update' in self.views_available:
-            myurls.append(url("^%s/(?P<pk>[^/]+)/update$" % (base_name,),
+            myurls.append(url("%s/(?P<pk>[^/]+)/update$" % (base_name,),
                               self.update,
                               name=utils.crud_url_name(
                                   self.model, 'update', prefix=self.urlprefix))
                           )
         if 'delete' in self.views_available:
-            myurls.append(url(r"^%s/(?P<pk>[^/]+)/delete$" % (base_name,),
+            myurls.append(url(r"%s/(?P<pk>[^/]+)/delete$" % (base_name,),
                               self.delete,
                               name=utils.crud_url_name(
                                   self.model, 'delete', prefix=self.urlprefix))
