@@ -292,7 +292,7 @@ class CRUDView(object):
     template_blocks = {}
     namespace = None
     fields = '__all__'
-    relative = False
+    urlrelative = False
     urlprefix = ""
     check_login = True
     check_perms = True
@@ -698,7 +698,7 @@ class CRUDView(object):
 
         base_name = ""
 
-        if self.relative:
+        if self.urlrelative:
             base_name = "%s" % (self.model.__name__.lower())
         else:
             base_name = "^%s%s/%s" % (pre, self.model._meta.app_label,

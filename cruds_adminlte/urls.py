@@ -7,7 +7,7 @@ from django.apps import apps
 from .crud import CRUDView, CRUDMixin
 
 
-def crud_for_model(model, urlprefix=None, namespace=None, relative=False, 
+def crud_for_model(model, urlprefix=None, namespace=None, urlrelative=False, 
                    login_required=False, check_perms=False,
                    add_form=None,
                    update_form=None, views=None, cruds_url=None,
@@ -25,7 +25,7 @@ def crud_for_model(model, urlprefix=None, namespace=None, relative=False,
     mymodel = model
     myurlprefix = urlprefix
     mynamespace = namespace
-    myrelative = relative
+    myurlrelative = urlrelative
     mycheck_perms = check_perms
     myadd_form = add_form
     myupdate_form = update_form
@@ -37,7 +37,7 @@ def crud_for_model(model, urlprefix=None, namespace=None, relative=False,
     class NOCLASS(CRUDView):
         model = mymodel
         urlprefix = myurlprefix
-        relative = myrelative
+        urlrelative = myurlrelative
         namespace = mynamespace
         check_login = login_required
         check_perms = mycheck_perms
@@ -55,7 +55,7 @@ def crud_for_model(model, urlprefix=None, namespace=None, relative=False,
     return nc.get_urls()
 
 
-def crud_for_app(app_label, urlprefix=None, namespace=None, relative=False,
+def crud_for_app(app_label, urlprefix=None, namespace=None, urlrelative=False,
                  login_required=False, check_perms=False,
                  modelforms={}, views=None, cruds_url=None,
                  mixin=None):
@@ -93,7 +93,7 @@ def crud_for_app(app_label, urlprefix=None, namespace=None, relative=False,
         if 'related_' + name in modelforms:
             related_fields = modelforms['related_' + name]
 
-        urls += crud_for_model(model, urlprefix, namespace, relative, 
+        urls += crud_for_model(model, urlprefix, namespace, urlrelative, 
                                login_required, check_perms,
                                add_form=add_form,
                                update_form=update_form,
