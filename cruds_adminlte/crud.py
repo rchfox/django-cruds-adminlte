@@ -70,6 +70,9 @@ class CRUDMixin(object):
     def get_check_perms(self, context):
         user = self.request.user
         available_perms = {}
+
+        print(self.views_available)
+        print(self.all_perms)
         for perm in self.all_perms:
             if self.check_perms:
                 if perm in self.views_available:
@@ -539,7 +542,6 @@ class CRUDView(object):
 
             def get_success_url(self):
                 url = super(ODeleteView, self).get_success_url()
-                print(self.getparams)
                 if (self.getparams):  # fixed filter delete action
                     url += '?' + self.getparams
                 return url
@@ -650,7 +652,6 @@ class CRUDView(object):
             # maybe other default perm can be here
             self.perms['list'].append("%s.view_%s" % (applabel, name))
             self.perms['detail'].append("%s.view_%s" % (applabel, name))
-            print(self.perms)
     def initialize_views_available(self):
         if self.views_available is None:
             self.views_available = [
