@@ -642,9 +642,7 @@ class CRUDView(object):
             }
         applabel = self.model._meta.app_label
         name = self.model.__name__.lower()
-        print('name: ', name)
         if self.check_perms:
-            print('check_perms: ', self.check_perms)
             self.check_create_perm(applabel, name)
             self.perms['create'].append("%s.add_%s" % (applabel, name))
             self.perms['update'].append("%s.change_%s" % (applabel, name))
@@ -652,7 +650,7 @@ class CRUDView(object):
             # maybe other default perm can be here
             self.perms['list'].append("%s.view_%s" % (applabel, name))
             self.perms['detail'].append("%s.view_%s" % (applabel, name))
-
+            print(self.perms)
     def initialize_views_available(self):
         if self.views_available is None:
             self.views_available = [
