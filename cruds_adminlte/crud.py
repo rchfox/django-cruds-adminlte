@@ -71,8 +71,6 @@ class CRUDMixin(object):
         user = self.request.user
         available_perms = {}
 
-        print(self.views_available)
-        print(self.all_perms)
         for perm in self.all_perms:
             if self.check_perms:
                 if perm in self.views_available:
