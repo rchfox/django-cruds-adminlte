@@ -147,12 +147,6 @@ def crud_fields(obj, fields=None):
         'fields': fields,
     }
 
-def crud_fields_exclude_id(obj, fields=None):
-    result = crud_fields(obj, fields)
-    print (result['fields'].__class__)
-    print (result['fields'])
-    return (result)
-
 
 @register_tag
 def get_fields(model, fields=None):
