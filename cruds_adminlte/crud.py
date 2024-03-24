@@ -120,6 +120,7 @@ class CRUDMixin(object):
 
         context = super(CRUDMixin, self).get_context_data(**kwargs)
         context.update({
+            'model_compact_name': self.model._meta.db_table,
             'model_verbose_name': self.model._meta.verbose_name,
             'model_verbose_name_plural': self.model._meta.verbose_name_plural,
             'namespace': self.namespace
