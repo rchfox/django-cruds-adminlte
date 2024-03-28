@@ -7,7 +7,8 @@ Free as freedom will be 26/8/2016
 '''
 
 
-from django.urls import url, include
+from django.urls import re_path, include
+
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponseForbidden
 from django.urls.base import reverse_lazy, reverse
@@ -704,35 +705,37 @@ class CRUDView(object):
             base_name = "^%s%s/%s" % (pre, self.model._meta.app_label,
                                      self.model.__name__.lower())
         myurls = []
+
         if 'list' in self.views_available:
-            myurls.append(url("%s/list$" % (base_name,),
-                              self.list,
-                              name=utils.crud_url_name(
-                                  self.model, 'list', prefix=self.urlprefix)))
+            myurls.append(re_path(r"%s/list$" % (base_name,),
+                                self.list,
+                                name=utils.crud_url_name(
+                                    self.model, 'list', prefix=self.urlprefix)))
+
         if 'create' in self.views_available:
-            myurls.append(url("%s/create$" % (base_name,),
-                              self.create,
-                              name=utils.crud_url_name(
-                                  self.model, 'create', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r"%s/create$" % (base_name,),
+                                self.create,
+                                name=utils.crud_url_name(
+                                    self.model, 'create', prefix=self.urlprefix)))
+
         if 'detail' in self.views_available:
-            myurls.append(url('%s/(?P<pk>[^/]+)$' % (base_name,),
-                              self.detail,
-                              name=utils.crud_url_name(
-                                  self.model, 'detail', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r'%s/(?P<pk>[^/]+)$' % (base_name,),
+                                self.detail,
+                                name=utils.crud_url_name(
+                                    self.model, 'detail', prefix=self.urlprefix)))
+
         if 'update' in self.views_available:
-            myurls.append(url("%s/(?P<pk>[^/]+)/update$" % (base_name,),
-                              self.update,
-                              name=utils.crud_url_name(
-                                  self.model, 'update', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r"%s/(?P<pk>[^/]+)/update$" % (base_name,),
+                                self.update,
+                                name=utils.crud_url_name(
+                                    self.model, 'update', prefix=self.urlprefix)))
+
         if 'delete' in self.views_available:
-            myurls.append(url(r"%s/(?P<pk>[^/]+)/delete$" % (base_name,),
-                              self.delete,
-                              name=utils.crud_url_name(
-                                  self.model, 'delete', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r"%s/(?P<pk>[^/]+)/delete$" % (base_name,),
+                                self.delete,
+                                name=utils.crud_url_name(
+                                    self.model, 'delete', prefix=self.urlprefix)))
+
 
         myurls += self.add_inlines(base_name)
         return myurls
@@ -750,15 +753,15 @@ class CRUDView(object):
                 self.inlines[i] = klass
                 if self.namespace:
                     dev.append(
-                        url('^inline/',
-                            include(klass.get_urls(),
-                                    namespace=self.namespace))
+                        re_path('^inline/',
+                                include(klass.get_urls(),
+                                namespace=self.namespace))
                     )
                 else:
                     dev.append(
-                        url('^inline/', include(klass.get_urls()))
-
+                        re_path('^inline/', include(klass.get_urls()))
                     )
+
         return dev
 
 
