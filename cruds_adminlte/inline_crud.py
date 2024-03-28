@@ -8,7 +8,7 @@ Created on 14/4/2017
 '''
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+from django.urls import url
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 
