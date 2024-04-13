@@ -8,6 +8,7 @@ Free as freedom will be 26/8/2016
 
 
 from django.urls import re_path, include
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponseForbidden
@@ -172,7 +173,7 @@ class CRUDMixin(object):
             if not self.validate_user_perms(request.user, perm,
                                             self.view_type):
                 return HttpResponseForbidden(render_to_string(
-                    'cruds/403.html', request=request
+                    http_response_code_template(403), request=request
                 ))
         return View.dispatch(self, request, *args, **kwargs)
 
@@ -801,3 +802,15 @@ class UserCRUDView(CRUDView):
                 queryset = queryset.filter(user=self.request.user)
                 return queryset
         return UListView
+
+
+def http_response_code_template(response_code):
+    app_name = get_main_app_name()
+    template_name = f'{app_name}/http_response/{response_code}.html'
+    return template_name
+
+def get_main_app_name():
+    root_urlconf = settings.ROOT_URLCONF
+    # Split the root URLconf to extract the main app name
+    main_app_name = root_urlconf.split('.')[0]
+    return main_app_name
