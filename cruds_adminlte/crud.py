@@ -24,7 +24,8 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.query_utils import Q
 from django.shortcuts import get_object_or_404
 from cruds_adminlte.filter import get_filters
-from django.template.loader import render_to_string
+from django.core.exceptions import PermissionDenied
+#from django.template.loader import render_to_string
 import types
 
 
@@ -172,9 +173,8 @@ class CRUDMixin(object):
         for perm in self.perms:
             if not self.validate_user_perms(request.user, perm,
                                             self.view_type):
-                return HttpResponseForbidden(render_to_string(
-                    http_response_code_template(403), request=request
-                ))
+                raise PermissionDenied("Custom message")
+                #return HttpResponseForbidden(render_to_string( http_response_code_template(403), request=request ))
         return View.dispatch(self, request, *args, **kwargs)
 
 
@@ -804,13 +804,13 @@ class UserCRUDView(CRUDView):
         return UListView
 
 
-def http_response_code_template(response_code):
-    app_name = get_main_app_name()
-    template_name = f'{app_name}/http_response/{response_code}.html'
-    return template_name
+# def http_response_code_template(response_code):
+#     app_name = get_main_app_name()
+#     template_name = f'{app_name}/http_response/{response_code}.html'
+#     return template_name
 
-def get_main_app_name():
-    root_urlconf = settings.ROOT_URLCONF
-    # Split the root URLconf to extract the main app name
-    main_app_name = root_urlconf.split('.')[0]
-    return main_app_name
+# def get_main_app_name():
+#     root_urlconf = settings.ROOT_URLCONF
+#     # Split the root URLconf to extract the main app name
+#     main_app_name = root_urlconf.split('.')[0]
+#     return main_app_name
