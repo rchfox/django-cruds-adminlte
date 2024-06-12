@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url, include
-from django.urls import path
+from django.urls import re_path, include, path
 
 from django.contrib import admin
 from django.http import HttpResponse
@@ -25,11 +24,11 @@ def hello_page(request):
 urlpatterns = [
     path('', lambda r: render(r, template_name="homepage.html"), name="home"),
     path('hello', hello_page, name='hello_page'),
-    url(r'^ta/', include('testapp.urls')),
-    url(r'^admin/', admin.site.urls),
-    url(r'^accounts/login/$', auth_views.LoginView.as_view(), name='login'),
-    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
-    url(r'^select2/', include('django_select2.urls')),
+    re_path(r'^ta/', include('testapp.urls')),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^accounts/login/$', auth_views.LoginView.as_view(), name='login'),
+    re_path(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    re_path(r'^select2/', include('django_select2.urls')),
 ]
 
 

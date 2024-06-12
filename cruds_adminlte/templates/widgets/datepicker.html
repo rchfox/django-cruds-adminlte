@@ -7,7 +7,7 @@ $(function () {
 </script>
 <div class="input-group date">
     <div class="input-group-addon">
-        <i class="fa {% if icon %}{{ icon }}{% else %}fa-calendar{% endif %}"></i>
+        <i class="fa-solid {% if icon %}{{ icon }}{% else %}fa-calendar-days{% endif %}"></i>
     </div>
     <input type="text" class="{{ class }}" data-date-format="{{ format }}" name="{{ name }}" id="{{ id }}" value="{{ value|date:djformat }}" />
 </div>

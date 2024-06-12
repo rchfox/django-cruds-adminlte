@@ -7,7 +7,9 @@ Free as freedom will be 26/8/2016
 '''
 
 
-from django.conf.urls import url, include
+from django.urls import re_path, include
+from django.conf import settings
+
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponseForbidden
 from django.urls.base import reverse_lazy, reverse
@@ -18,11 +20,12 @@ from django.views.generic import (ListView, CreateView, DeleteView,
 from cruds_adminlte import utils
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models.query_utils import Q
 from django.shortcuts import get_object_or_404
 from cruds_adminlte.filter import get_filters
-from django.template.loader import render_to_string
+from django.core.exceptions import PermissionDenied
+#from django.template.loader import render_to_string
 import types
 
 
@@ -70,6 +73,7 @@ class CRUDMixin(object):
     def get_check_perms(self, context):
         user = self.request.user
         available_perms = {}
+
         for perm in self.all_perms:
             if self.check_perms:
                 if perm in self.views_available:
@@ -119,6 +123,7 @@ class CRUDMixin(object):
 
         context = super(CRUDMixin, self).get_context_data(**kwargs)
         context.update({
+            'model_compact_name': self.model._meta.db_table,
             'model_verbose_name': self.model._meta.verbose_name,
             'model_verbose_name_plural': self.model._meta.verbose_name_plural,
             'namespace': self.namespace
@@ -168,9 +173,8 @@ class CRUDMixin(object):
         for perm in self.perms:
             if not self.validate_user_perms(request.user, perm,
                                             self.view_type):
-                return HttpResponseForbidden(render_to_string(
-                    'cruds/403.html', request=request
-                ))
+                raise PermissionDenied("Custom message")
+                #return HttpResponseForbidden(render_to_string( http_response_code_template(403), request=request ))
         return View.dispatch(self, request, *args, **kwargs)
 
 
@@ -292,6 +296,7 @@ class CRUDView(object):
     template_blocks = {}
     namespace = None
     fields = '__all__'
+    urlrelative = False
     urlprefix = ""
     check_login = True
     check_perms = True
@@ -538,7 +543,6 @@ class CRUDView(object):
 
             def get_success_url(self):
                 url = super(ODeleteView, self).get_success_url()
-                print(self.getparams)
                 if (self.getparams):  # fixed filter delete action
                     url += '?' + self.getparams
                 return url
@@ -649,7 +653,6 @@ class CRUDView(object):
             # maybe other default perm can be here
             self.perms['list'].append("%s.view_%s" % (applabel, name))
             self.perms['detail'].append("%s.view_%s" % (applabel, name))
-
     def initialize_views_available(self):
         if self.views_available is None:
             self.views_available = [
@@ -694,38 +697,46 @@ class CRUDView(object):
                 pre = "%s/" % self.cruds_url
         except AttributeError:
             pre = ""
-        base_name = "%s%s/%s" % (pre, self.model._meta.app_label,
-                                 self.model.__name__.lower())
+
+        base_name = ""
+
+        if self.urlrelative:
+            base_name = "%s" % (self.model.__name__.lower())
+        else:
+            base_name = "^%s%s/%s" % (pre, self.model._meta.app_label,
+                                     self.model.__name__.lower())
         myurls = []
+
         if 'list' in self.views_available:
-            myurls.append(url("^%s/list$" % (base_name,),
-                              self.list,
-                              name=utils.crud_url_name(
-                                  self.model, 'list', prefix=self.urlprefix)))
+            myurls.append(re_path(r"%s/list$" % (base_name,),
+                                self.list,
+                                name=utils.crud_url_name(
+                                    self.model, 'list', prefix=self.urlprefix)))
+
         if 'create' in self.views_available:
-            myurls.append(url("^%s/create$" % (base_name,),
-                              self.create,
-                              name=utils.crud_url_name(
-                                  self.model, 'create', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r"%s/create$" % (base_name,),
+                                self.create,
+                                name=utils.crud_url_name(
+                                    self.model, 'create', prefix=self.urlprefix)))
+
         if 'detail' in self.views_available:
-            myurls.append(url('^%s/(?P<pk>[^/]+)$' % (base_name,),
-                              self.detail,
-                              name=utils.crud_url_name(
-                                  self.model, 'detail', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r'%s/(?P<pk>[^/]+)$' % (base_name,),
+                                self.detail,
+                                name=utils.crud_url_name(
+                                    self.model, 'detail', prefix=self.urlprefix)))
+
         if 'update' in self.views_available:
-            myurls.append(url("^%s/(?P<pk>[^/]+)/update$" % (base_name,),
-                              self.update,
-                              name=utils.crud_url_name(
-                                  self.model, 'update', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r"%s/(?P<pk>[^/]+)/update$" % (base_name,),
+                                self.update,
+                                name=utils.crud_url_name(
+                                    self.model, 'update', prefix=self.urlprefix)))
+
         if 'delete' in self.views_available:
-            myurls.append(url(r"^%s/(?P<pk>[^/]+)/delete$" % (base_name,),
-                              self.delete,
-                              name=utils.crud_url_name(
-                                  self.model, 'delete', prefix=self.urlprefix))
-                          )
+            myurls.append(re_path(r"%s/(?P<pk>[^/]+)/delete$" % (base_name,),
+                                self.delete,
+                                name=utils.crud_url_name(
+                                    self.model, 'delete', prefix=self.urlprefix)))
+
 
         myurls += self.add_inlines(base_name)
         return myurls
@@ -743,15 +754,15 @@ class CRUDView(object):
                 self.inlines[i] = klass
                 if self.namespace:
                     dev.append(
-                        url('^inline/',
-                            include(klass.get_urls(),
-                                    namespace=self.namespace))
+                        re_path('^inline/',
+                                include(klass.get_urls(),
+                                namespace=self.namespace))
                     )
                 else:
                     dev.append(
-                        url('^inline/', include(klass.get_urls()))
-
+                        re_path('^inline/', include(klass.get_urls()))
                     )
+
         return dev
 
 
@@ -791,3 +802,15 @@ class UserCRUDView(CRUDView):
                 queryset = queryset.filter(user=self.request.user)
                 return queryset
         return UListView
+
+
+# def http_response_code_template(response_code):
+#     app_name = get_main_app_name()
+#     template_name = f'{app_name}/http_response/{response_code}.html'
+#     return template_name
+
+# def get_main_app_name():
+#     root_urlconf = settings.ROOT_URLCONF
+#     # Split the root URLconf to extract the main app name
+#     main_app_name = root_urlconf.split('.')[0]
+#     return main_app_name
